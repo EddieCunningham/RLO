@@ -3,6 +3,8 @@ from jax import random
 from functools import partial
 from util import normal_log_pdf
 from jax import jit
+import tensorflow as tf
+import tensorflow_probability as tfp
 
 def metropolis_hastings_proposals( unnormalized_log_pdf,
                                    proposal_noise,
@@ -23,6 +25,31 @@ def metropolis_hastings_proposals( unnormalized_log_pdf,
     Output:
         A batch of proposals with shape (n_proposals, x_dim)
     """
+    pdf_type, log_pdf = unnormalized_log_pdf
+
+    kernel = tfp.mcmc.HamiltonianMonteCarlo( target_log_prob_fn=log_pdf, step_size=0.5, num_leapfrog_steps=2 )
+
+    states = tfp.mcmc.sample_chain( num_results=n_proposals,
+                                    num_burnin_steps=0,
+                                    current_state=tf.constant( [ -20.0, 20.0 ] ),
+                                    kernel=kernel,
+                                    trace_fn=None )
+    return states.numpy()
+
+
+    # states = tfp.mcmc.sample_chain(
+    #     num_results=1000,
+    #     num_burnin_steps=0,
+    #     current_state=tf.zeros( 2 ),
+    #     kernel=tfp.mcmc.HamiltonianMonteCarlo(
+    #       target_log_prob_fn=unnormalized_log_pdf,
+    #       step_size=0.5,
+    #       num_leapfrog_steps=2),
+    #     trace_fn=None)
+
+    # print( states )
+    # assert 0
+    # return points
 
     # Create the proposals list and get the first point
     x_0 = np.zeros( x_dim ) if x_0 is None else x_0

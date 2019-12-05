@@ -34,7 +34,7 @@ RUN apt-get update && \
 RUN python -m pip install --upgrade pip && \
     pip uninstall numpy scipy bokeh cython matplotlib -y && \
     pip install --user numpy scipy pandas bokeh cython networkx graphviz \
-    pygraphviz PyQt5 matplotlib opt_einsum autograd pymc3 recordclass jaxlib jax
+    pygraphviz PyQt5 matplotlib pymc3 recordclass jaxlib jax tensorflow tensorflow-probability
 
 # Add the path where bokeh gets installed to
 RUN export PATH=/root/.local/bin:$PATH

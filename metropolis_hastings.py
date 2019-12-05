@@ -110,3 +110,4 @@ class MetropolisHastings():
             None
         """
         self.proposals = ColumnDataSource()
+
